@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {}
+
+#gamebox-container {
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    overflow: hidden;
+    position: absolute;
+    /**? if ball overflow from the container */
+}
+
+#user-score,
+#ai-score {
+    color: white;
+    font-size: 50px;
+    position: absolute;
+    top: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+#user-score {
+    left: 40%;
+}
+
+#ai-score {
+    right: 40%;
+}
+
+#verticle-line {
+    border: 2px dashed #fff;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100vh;
+    transform: translateX(-50%);
+    /* to make it center if the width is 1px then it subtract 0.5 px and comes to center */
+}
+
+#user-paddle {
+    border-radius: 10px;
+    width: 20px;
+    background-color: burlywood;
+    height: 100px;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+}
+
+#ai-paddle {
+    border-radius: 10px;
+    width: 20px;
+    background-color: rgb(135, 202, 222);
+    height: 100px;
+    position: absolute;
+    right: 5px;
+    top: 50%;
+}
+
+#ball {
+    background-color: rgb(255, 0, 43);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
