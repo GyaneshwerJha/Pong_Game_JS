@@ -5,6 +5,11 @@ let gamebox = document.getElementById("gamebox-container");
 
 let zPressed = false;
 let xPressed = false;
+let nPressed = false;
+let mPressed = false;
+
+let userScore = document.getElementById("user-score");
+let aiScore = document.getElementById("ai-score");
 
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
@@ -12,22 +17,34 @@ document.addEventListener("keyup", keyUpHandler);
 function keyDownHandler(e) {
     if (e.key == 'z') {
         zPressed = true;
-        console.log("z pressed");
+        // console.log("z pressed");
     }
     else if (e.key == 'x') {
         xPressed = true;
-        console.log("x pressed");
+        // console.log("x pressed");
+    }
+    else if (e.key == 'n') {
+        nPressed = true;
+    }
+    else if (e.key == 'm') {
+        mPressed = true;
     }
 }
 
 function keyUpHandler(e) {
     if (e.key == 'z') {
         zPressed = false;
-        console.log("z released");
+        // console.log("z released");
     }
     else if (e.key == 'x') {
         xPressed = false;
-        console.log("x released")
+        // console.log("x released")
+    }
+    else if (e.key == 'n') {
+        nPressed = false;
+    }
+    else if (e.key == "m") {
+        mPressed = false;
     }
 }
 
@@ -42,8 +59,8 @@ function keyUpHandler(e) {
 
  */
 
-let vX = -2;
-let vY = -3;
+let vX = -5;
+let vY = -7;
 let v = Math.sqrt(Math.pow(vX, 2) + Math.pow(vY, 2));
 
 
@@ -51,18 +68,41 @@ let v = Math.sqrt(Math.pow(vX, 2) + Math.pow(vY, 2));
 function reset() {
     ball.style.left = "50%";
     ball.style.top = "50%";
-    vX = -2;
-    vY = -3;
+    vX = -5;
+    vY = -7;
     v = Math.sqrt(Math.pow(vX, 2) + Math.pow(vY, 2));
 }
 
+function checkCollision(paddle) {
+    let ballTop = ball.offsetTop;
+    let ballBottom = ball.offsetTop + ball.offsetHeight;
+    let ballLeft = ball.offsetLeft;
+    let ballRight = ball.offsetLeft + ball.offsetWidth;
+
+    let paddleTop = paddle.offsetTop;
+    let paddleBottom = paddle.offsetTop + paddle.offsetHeight;
+    let paddleLeft = paddle.offsetLeft;
+    let paddleRight = paddle.offsetLeft + paddle.offsetWidth;
+
+    if (ballBottom > paddleTop && ballTop < paddleBottom && ballRight > paddleLeft && ballLeft < paddleRight) {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
 
 function gameLoop() {
     if (ball.offsetLeft < 0) {
+        aiScore.innerHTML = parseInt(aiScore.innerHTML) + 1;
         reset();
     }
     if (ball.offsetLeft > gamebox.offsetWidth - ball.offsetWidth) {
         reset();
+        userScore.innerHTML = parseInt(userScore.innerHTML) + 1;
+
+
     }
     if (ball.offsetTop < 0) {
         vY = -vY;
@@ -71,14 +111,62 @@ function gameLoop() {
         vY = -vY;
     }
 
+    //  *************************
+    let paddle = ball.offsetLeft < gamebox.offsetWidth / 2 ? userPaddle : aiPaddle;
+    let ballCenterY = ball.offsetTop + ball.offsetHeight / 2;
+    let paddleCentreY = paddle.offsetTop + paddle.offsetHeight / 2;
+
+    let angle = 0;
+    if (checkCollision(paddle)) {
+        if (paddle == userPaddle) {
+            if (ballCenterY < paddleCentreY) {
+                angle = -Math.PI / 4;
+            }
+            else if (ballCenterY > paddleCentreY) {
+                angle = Math.PI / 4;
+            }
+            else {
+                angle = 0;
+            }
+        }
+        else if (paddle == aiPaddle) {
+            if (ballCenterY < paddleCentreY) {
+                angle = -3 * Math.PI / 4;
+            }
+            else if (ballCenterY > paddleCentreY) {
+                angle = 3 * Math.PI / 4;
+            }
+            else {
+                angle = 0;
+            }
+        }
+
+        v = v + 0.2;
+        vX = v * Math.cos(angle);
+        vY = v * Math.sin(angle);
+
+    }
+
+    // let aiDelay = 0.09;
+    // aiPaddle.style.top = aiPaddle.offsetTop + (ball.offsetTop - aiPaddle.offsetTop - aiPaddle.offsetHeight / 2) * aiDelay + "px";
+
+
+    // **************************
     ball.style.left = ball.offsetLeft + vX + "px";
     ball.style.top = ball.offsetTop + vY + "px";
 
     if (zPressed && userPaddle.offsetTop > 2) {
-        userPaddle.style.top = userPaddle.offsetTop - 5 + "px";
+        userPaddle.style.top = userPaddle.offsetTop - 7 + "px";
     }
-    if (xPressed && userPaddle.offsetTop < gamebox.offsetHeight - userPaddle.offsetHeight - 2) {
-        userPaddle.style.top = userPaddle.offsetTop + 5 + "px";
+    if (xPressed && userPaddle.offsetTop < gamebox.offsetHeight - aiPaddle.offsetHeight - 2) {
+        userPaddle.style.top = userPaddle.offsetTop + 7 + "px";
+    }
+
+    if (nPressed && aiPaddle.offsetTop > 2) {
+        aiPaddle.style.top = aiPaddle.offsetTop - 7 + "px";
+    }
+    if (mPressed && aiPaddle.offsetTop < gamebox.offsetHeight - aiPaddle.offsetHeight - 2) {
+        aiPaddle.style.top = aiPaddle.offsetTop + 7 + "px";
     }
     requestAnimationFrame(gameLoop);
 }
